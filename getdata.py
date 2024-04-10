@@ -1,20 +1,18 @@
 from datetime import datetime
 from flask import Flask, redirect, jsonify, request, session
+from pathlib import Path
 import requests
 import urllib.parse
 import json 
 import os
 import subprocess
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
-
-output = ''                                                     # output = Your output folder for the spotify album data
-searchlistings = ''                                             # searchlistings = Your path to searchlistings.py
-
 client_ID = ''                                                  # client_ID = Spotify API client ID                                                
 clien_secret = ''                                               # client_secret = Spotify API secret client ID
 redirect_URL = 'http://localhost:5000/callback'
+
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 # No editing beyond this point
 
@@ -90,9 +88,13 @@ def get_data():
     'limit': limit
     }
 
+    main_path = Path(__file__).resolve().parent
+
+    output = os.path.join(main_path, 'Data')
     if not os.path.exists(output):
         os.makedirs(output)
-
+        
+    spotify_data_folder_path = os.path.join(output, 'Spotify json Data')
     albums_file_path = os.path.join(output, 'albums.json')
     if not os.path.exists(albums_file_path):
         with open(albums_file_path, 'w') as new_file:
@@ -102,7 +104,8 @@ def get_data():
     albums = response.json()
     with open(albums_file_path, 'w') as new_file:
         json.dump(albums, new_file, indent=2)
-
+        
+    searchlistings = os.path.join(main_path, 'searchlistings.py')
     subprocess.run(['python', searchlistings])
 
     return (
