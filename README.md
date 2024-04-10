@@ -15,16 +15,15 @@ This Python script automates the process of finding potential matching listings 
 * `cloudscraper` library
 * `beautifulsoup4` library
 * `pycountry` library
+* `pathlib` library
 
 **Instructions:**
 
-1. Configure the script with your Spotify API credentials (client ID, client secret, redirect URL) and desired file paths.
-2. Configure `python getdata.py`, `searchlistings.py` and `filter.py` with the necessary file paths (folder_path, subprocess_path, album data, user_path, listing data).
-3. Run `python getdata.py` to retrieve Spotify data, scrape listing data from Discogs and analyze it to identify potential matches.
+1. Configure the script with your Spotify API credentials (client ID, client secret, redirect URL), remember to place all three files into the same folder directory.
+2. Run `python main.py` to retrieve Spotify Album data, scrape listing data from the Discogs Marketplace and analyze it to identify potential matches which are saved locally and printed in terminal.
 
 **Additional Notes:**
 
-* Replace the placeholders (`folder_path`, `subprocess_path`, etc.) with your desired configurations in each script.
 * Ensure you have installed the required libraries using `pip install <library_name>`.
 * Just a passion project, this script is provided for educational purposes only and might require modifications depending on your specific needs.
 
