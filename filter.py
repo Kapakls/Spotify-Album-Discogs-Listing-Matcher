@@ -1,8 +1,6 @@
-import os
+from pathlib import Path
 import json
-
-input_directory = ''                                    # input_directory = Your output folder for the Discogs marketplace data
-output_directory = ''                                   # output_directory = Your path to the output folder containing the json files with the matching listings
+import os
 
 # No editing beyond this point
 
@@ -55,8 +53,6 @@ def main(input_directory, output_directory, similarity_threshold):
         json_file_path = os.path.join(input_directory, json_file_name)
         listing_data = load_listing_data(json_file_path)
         
-        print('Debug - Processing file:', json_file_name)
-        
         result = filter_matching_listings({'json_file_name': json_file_name, 'listing_data': listing_data}, similarity_threshold)
 
         if len(result) > 0:
@@ -67,9 +63,16 @@ def main(input_directory, output_directory, similarity_threshold):
                 json.dump(result, output_file, indent=2)
                 
             print('Debug - Matching listings saved to:', output_file_path)
-        else:
-            print('Debug - No matching listings')
+
 
 if __name__ == "__main__":
     similarity_threshold = 0.1
+
+    main_path = Path(__file__).resolve().parent
+
+    input_directory = os.path.join(main_path, 'Data', 'Discogs json Data')
+    output_directory = os.path.join(main_path, 'Data', 'Matching Listings')
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
     main(input_directory, output_directory, similarity_threshold)
