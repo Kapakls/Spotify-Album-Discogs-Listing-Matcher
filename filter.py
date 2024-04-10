@@ -2,8 +2,6 @@ from pathlib import Path
 import json
 import os
 
-# No editing beyond this point
-
 def jaccard_similarity(list1, list2):
     set1 = set(list1)
     set2 = set(list2)
