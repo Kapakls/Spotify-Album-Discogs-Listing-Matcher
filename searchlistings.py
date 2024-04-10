@@ -1,16 +1,11 @@
 from bs4 import BeautifulSoup
+from pathlib import Path
 import cloudscraper
 import json
 import os
 import re
 import pycountry
 import subprocess
-
-albums_path = ''                                            # albums_path = Your output folder for the spotify album data, specifically the albums.json file
-output = ''                                                 # output = Your output folder for the Discogs marketplace data
-filter = ''                                                 # filter = Your path to filter.py
-
-# No editing beyond this point
 
 def clean_filename(filename):
     clean_filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
@@ -88,7 +83,17 @@ def extract_data_and_save(album, output, scraper):
 def main():
 
     scraper = cloudscraper.create_scraper()
-    albums = load_json(albums_path)
+    
+    main_path = Path(__file__).resolve().parent
+    albums_path = os.path.join(main_path, 'Data', 'Spotify json Data', 'albums.json')
+
+    albums = load_json(albums_path)     
+
+    output = os.path.join(main_path, 'Data', 'Discogs json Data')
+    if not os.path.exists(output):
+        os.makedirs(output)
+    
+    filter = os.path.join(main_path, 'filter.py')
 
     for album in albums.get('items', []):
         extract_data_and_save(album, output, scraper)
