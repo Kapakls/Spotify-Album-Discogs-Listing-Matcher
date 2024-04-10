@@ -95,7 +95,10 @@ def get_data():
         os.makedirs(output)
         
     spotify_data_folder_path = os.path.join(output, 'Spotify json Data')
-    albums_file_path = os.path.join(output, 'albums.json')
+    if not os.path.exists(spotify_data_folder_path):
+        os.makedirs(spotify_data_folder_path)
+        
+    albums_file_path = os.path.join(spotify_data_folder_path, 'albums.json')
     if not os.path.exists(albums_file_path):
         with open(albums_file_path, 'w') as new_file:
             json.dump({}, new_file, indent=2)
