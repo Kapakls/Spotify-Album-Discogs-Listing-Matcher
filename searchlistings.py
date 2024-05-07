@@ -34,50 +34,56 @@ def save_listing_data(data_list, artist_name, album_name, output):
 
 
 def extract_data_and_save(album, output, scraper):
+    albums_found = []
     album_name = album['album']['name']
     artists = album['album']['artists']
 
     for artist in artists:
         artist_name = artist['name']
       
-        limit = 100  
-        total_pages = 5
+        limit = 50  
+        total_pages = 2
 
         for page in range(1, total_pages + 1):
-            URL_search_code = f"{artist_name.replace(' ', '+')}+{album_name.replace(' ', '+')}&page={page}&per_page={limit}"
-            URL = f'https://www.discogs.com/sell/list?q={URL_search_code}'
-            print('Debug - Extraction URL:', URL)
 
-            response = scraper.get(URL)
-
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.text, 'lxml')
-                listings = soup.find_all('tr', class_=['shortcut_navigable', 'shortcut_navigable unavailable'])
-            else:
-                continue
-
-            data_list = []
-
-            for item in listings:
-                listing_data = {}
-                listing_data['title'] = item.select_one('.item_description_title').get_text(strip=True)
-                album_cover = album['album'].get('images', [{}])[0].get('url', 'N/A')
-                listing_data['cover'] = album_cover
-                ships_from_element = item.select_one('.seller_info li:-soup-contains("Ships From:")')
-                seller_location_text = ships_from_element.get_text(strip=True).replace('Ships From:', '') if ships_from_element else 'N/A'
-
-                try:
-                    seller_location_iso = pycountry.countries.get(name=seller_location_text).alpha_2
-                except AttributeError:
-                    seller_location_iso = 'N/A'
-
-                listing_data['seller_location'] = seller_location_iso
-                listing_url_element = item.select_one('.item_description_title[href]')
-                listing_data['listing_url'] = f'https://www.discogs.com{listing_url_element["href"]}' if listing_url_element else 'N/A'
-
-                data_list.append(listing_data)
-
-            save_listing_data(data_list, artist_name, album_name, output)
+            if album_name not in albums_found:
+                
+                URL_search_code = f"{artist_name.replace(' ', '+')}+{album_name.replace(' ', '+')}&page={page}&per_page={limit}"
+                URL = f'https://www.discogs.com/sell/list?q={URL_search_code}'
+                print('Debug - Extraction URL:', URL)
+    
+                albums_found.append(album_name)
+                
+                response = scraper.get(URL)
+    
+                if response.status_code == 200:
+                    soup = BeautifulSoup(response.text, 'lxml')
+                    listings = soup.find_all('tr', class_=['shortcut_navigable', 'shortcut_navigable unavailable'])
+                else:
+                    continue
+    
+                data_list = []
+    
+                for item in listings:
+                    listing_data = {}
+                    listing_data['title'] = item.select_one('.item_description_title').get_text(strip=True)
+                    album_cover = album['album'].get('images', [{}])[0].get('url', 'N/A')
+                    listing_data['cover'] = album_cover
+                    ships_from_element = item.select_one('.seller_info li:-soup-contains("Ships From:")')
+                    seller_location_text = ships_from_element.get_text(strip=True).replace('Ships From:', '') if ships_from_element else 'N/A'
+    
+                    try:
+                        seller_location_iso = pycountry.countries.get(name=seller_location_text).alpha_2
+                    except AttributeError:
+                        seller_location_iso = 'N/A'
+    
+                    listing_data['seller_location'] = seller_location_iso
+                    listing_url_element = item.select_one('.item_description_title[href]')
+                    listing_data['listing_url'] = f'https://www.discogs.com{listing_url_element["href"]}' if listing_url_element else 'N/A'
+    
+                    data_list.append(listing_data)
+    
+                save_listing_data(data_list, artist_name, album_name, output)
 
 
 def main():
