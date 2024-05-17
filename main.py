@@ -1,11 +1,11 @@
-from datetime import datetime
 from flask import Flask, redirect, jsonify, request, session
+from datetime import datetime
 from pathlib import Path
-import requests
 import urllib.parse
+import subprocess   
+import requests
 import json 
 import os
-import subprocess
 
 client_ID = ''                                                  # client_ID = Spotify API client ID                                                
 clien_secret = ''                                               # client_secret = Spotify API secret client ID
@@ -111,6 +111,16 @@ def get_data():
     searchlistings = os.path.join(main_path, 'searchlistings.py')
     subprocess.run(['python', searchlistings])
 
+    user_file_path = os.path.join(spotify_data_folder_path, 'user.json')
+    if not os.path.exists(user_file_path):
+        with open(user_file_path, 'w') as new_file:
+            json.dump({}, new_file, indent=2)
+
+    response = requests.get(API_URL + 'me', headers=headers)
+    user = response.json()
+    with open(user_file_path, 'w') as new_file:
+        json.dump(user, new_file, indent=2)
+    
     return (
         'Script running...<br>'
         '[✓] main.py accessed<br>'
