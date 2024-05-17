@@ -29,7 +29,7 @@ def index():
 
 @app.route('/login')
 def login():    
-    scope = 'user-top-read user-library-read'
+    scope = 'user-top-read user-library-read user-read-private'
 
     params = {
         'client_id': client_ID,
@@ -113,9 +113,9 @@ def get_data():
 
     return (
         'Script running...<br>'
-        '[✓] getdata.py accessed<br>'
+        '[✓] main.py accessed<br>'
         '[✓] searchlistings.py accessed<br>'
-        '[✓] filter.py accessed - saving URLs localy'
+        '[✓] filter.py accessed - saving URLs locally'
     )
 
 
