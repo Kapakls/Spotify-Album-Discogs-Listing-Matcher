@@ -6,7 +6,7 @@ This Python script automates the process of finding potential matching listings 
 
 * Retrieves user data and album information from the Spotify API.
 * Scrapes listing data from Discogs for each album in the user's library.
-* Analyzes listing titles and identifies potential matches based on Jaccard similarity.
+* Analyzes listing titles and identifies potential matches based on Jaccard similarity and region.
 
 **Requirements:**
 
