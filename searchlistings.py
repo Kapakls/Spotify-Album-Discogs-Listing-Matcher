@@ -1,11 +1,11 @@
 from bs4 import BeautifulSoup
 from pathlib import Path
 import cloudscraper
+import subprocess
+import pycountry
 import json
 import os
 import re
-import pycountry
-import subprocess
 
 def clean_filename(filename):
     clean_filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
