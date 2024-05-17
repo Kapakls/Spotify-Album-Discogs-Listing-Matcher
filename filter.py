@@ -15,6 +15,13 @@ def load_listing_data(json_file_path):
         return json.load(file)
 
 
+def load_json(file_path):
+    if os.path.exists(file_path):
+        with open(file_path) as json_file:
+            return json.load(json_file)
+    return {}
+
+
 def calculate_similarity(json_list_clear, title_list_clear):
     return jaccard_similarity(json_list_clear, title_list_clear)
 
@@ -45,6 +52,8 @@ def filter_matching_listings(item, similarity_threshold):
 
 def main(input_directory, output_directory, similarity_threshold):
 
+    user = load_json(user_path)
+    
     json_files = [f for f in os.listdir(input_directory) if f.endswith('.json')]
 
     for json_file_name in json_files:
@@ -62,14 +71,27 @@ def main(input_directory, output_directory, similarity_threshold):
                 
             print('Debug - Matching listings saved to:', output_file_path)
 
+            local_matches = [listing for listing in result if listing["region"] == user.get("country")]
+            if local_matches:
+                local_output_file_path = os.path.join(local_directory, f"Local - {json_file_name}.json")
+                os.makedirs(local_directory, exist_ok=True)
+                
+                with open(local_output_file_path, "w", encoding="utf-8") as local_output_file:
+                    json.dump(local_matches, local_output_file, indent=2)
+                    
+                print("Debug - Local Matching listings saved to:", local_output_file_path)
+
+
 
 if __name__ == "__main__":
     similarity_threshold = 0.1
 
     main_path = Path(__file__).resolve().parent
+    user_path = os.path.join(main_path, 'Data', 'Spotify json Data', 'user.json')
 
     input_directory = os.path.join(main_path, 'Data', 'Discogs json Data')
     output_directory = os.path.join(main_path, 'Data', 'Matching Listings')
+    local_directory = os.path.join(main_path, "Data", "Local Matching Listings")
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
